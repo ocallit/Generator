@@ -1,0 +1,95 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "59b72e02d0bb5673efb10d8b50f4a169",
+    "packages": [
+        {
+            "name": "ocallit/jqgrider",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocallit/JqGrider.git",
+                "reference": "3a1490a7226b424110768c9db66627c53456c483"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocallit/JqGrider/zipball/3a1490a7226b424110768c9db66627c53456c483",
+                "reference": "3a1490a7226b424110768c9db66627c53456c483",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mysqli": "*",
+                "ocallit/sqler": "*",
+                "php": "^8.2"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Ocallit\\JqGrider\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Util functions for jqGrid",
+            "support": {
+                "issues": "https://github.com/ocallit/JqGrider/issues",
+                "source": "https://github.com/ocallit/JqGrider/tree/main"
+            },
+            "time": "2025-01-27T17:41:52+00:00"
+        },
+        {
+            "name": "ocallit/sqler",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocallit/Sqler.git",
+                "reference": "01bfa1049e78679bc07d049e7c7719288b00efaf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocallit/Sqler/zipball/01bfa1049e78679bc07d049e7c7719288b00efaf",
+                "reference": "01bfa1049e78679bc07d049e7c7719288b00efaf",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mysqli": "*",
+                "php": "^8.2"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Ocallit\\Sqler\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A php sql builder, helpers and mysqli wrapper",
+            "support": {
+                "issues": "https://github.com/ocallit/Sqler/issues",
+                "source": "https://github.com/ocallit/Sqler/tree/main"
+            },
+            "time": "2025-01-27T16:40:54+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": {},
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=8.2",
+        "ext-mysqli": "*"
+    },
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
+}
