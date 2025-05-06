@@ -20,15 +20,25 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
           'socket' => NULL,
           'flags' => 0,
         ];
+        $sqlExecutor = new SqlExecutor($config);
 
-    $sqlExecutor = new SqlExecutor($config);
-    DatabaseMetadata::initialize($sqlExecutor);
-    $builder = new ColModelBuilder($sqlExecutor);
-    $query = $_POST['query'] ?? '';
-        if(!empty($query)) {
+
+
+        $query = $_POST['query'] ?? '';
+        $ver = $_POST['ver'] ?? '';
+        if($ver == 'Tablas') {
+            $r = $sqlExecutor->array("SHOW FULL TABLES");
+            $tables = [];
+            foreach($r as $table)
+                $tables[] = reset($table) . ($table['Table_type'] !== 'BASE TABLE' ? ' (VIEW)' : '');
+            $result = "<ol style='line-height:2em;column-count:4'><li>" . implode("</li><li>", $tables) . "</li></ol>";
+        } elseif(!empty($query)) {
+            DatabaseMetadata::initialize($sqlExecutor);
+            $builder = new ColModelBuilder($sqlExecutor);
             $colModel = $builder->buildFromQuery($query);
-            $result = $builder->toJson($colModel);
+            $result = htmlspecialchars($builder->toJson($colModel));
         }
+
     } catch(Exception $e) {
         $error = $e->getMessage();
     }
@@ -38,7 +48,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ColModel Generator</title>
+    <title>Generator</title>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <style>
         body {
@@ -141,8 +151,9 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 <div class="container">
-    <h1 style="color:maroon;margin:0;padding:0">ColModel Generator</h1>
+    <h1 style="color:maroon;margin:0;padding:0">Generator</h1>
     <form method="post" id="colmoForm">
+
         <div class="flexRow" style="margin-bottom:0;padding-bottom:0">
             <div class="form-group">
                 <label for="databaseName">Database Name:</label><br>
@@ -157,29 +168,25 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="password" id="password" name="password" required>
             </div>
 
+            <div><label style="cursor: pointer;"><input value="Tablas" name="ver" type="checkbox" onchange="this.form.submit()"> List Tables</label></div>
             <div><button type="submit">Generate ColModel</button></div>
+
         </div>
         <div class="form-group" style="margin-top:0;padding-top:0">
             <label for="query">SQL Query:</label><br>
             <textarea id="query" name="query" required
                       placeholder="Enter your SELECT query here..."><?= htmlspecialchars($_POST['query'] ?? '') ?></textarea>
         </div>
-
-
     </form>
 
     <?php if($error): ?>
-        <div class="error">
-            <?= htmlspecialchars($error) ?>
-        </div>
+        <div class="error"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
 
-    <?php if($result): ?>
-        <div class="result">
-            <button class="copy-btn" onclick="copyResult()">Copy</button>
-            <pre id="result"><?= htmlspecialchars($result) ?></pre>
-        </div>
-    <?php endif; ?>
+    <div class="result">
+        <button class="copy-btn" onclick="copyResult()">Copy</button>
+        <pre id="result"><?= $result ?></pre>
+    </div>
 </div>
 
 <script>

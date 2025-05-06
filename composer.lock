@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "59b72e02d0bb5673efb10d8b50f4a169",
+    "content-hash": "635bf2d9358df66d9591f54e270c6522",
     "packages": [
         {
             "name": "ocallit/jqgrider",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ocallit/JqGrider.git",
-                "reference": "3a1490a7226b424110768c9db66627c53456c483"
+                "reference": "aec59b37a3184ead742e62ade8f0fded8e29dcd8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ocallit/JqGrider/zipball/3a1490a7226b424110768c9db66627c53456c483",
-                "reference": "3a1490a7226b424110768c9db66627c53456c483",
+                "url": "https://api.github.com/repos/ocallit/JqGrider/zipball/aec59b37a3184ead742e62ade8f0fded8e29dcd8",
+                "reference": "aec59b37a3184ead742e62ade8f0fded8e29dcd8",
                 "shasum": ""
             },
             "require": {
@@ -41,7 +41,7 @@
                 "issues": "https://github.com/ocallit/JqGrider/issues",
                 "source": "https://github.com/ocallit/JqGrider/tree/main"
             },
-            "time": "2025-01-27T17:41:52+00:00"
+            "time": "2025-05-06T01:32:15+00:00"
         },
         {
             "name": "ocallit/sqler",
@@ -49,12 +49,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ocallit/Sqler.git",
-                "reference": "01bfa1049e78679bc07d049e7c7719288b00efaf"
+                "reference": "e3ee0737c66b7515c007d6c1248937df534cc7b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ocallit/Sqler/zipball/01bfa1049e78679bc07d049e7c7719288b00efaf",
-                "reference": "01bfa1049e78679bc07d049e7c7719288b00efaf",
+                "url": "https://api.github.com/repos/ocallit/Sqler/zipball/e3ee0737c66b7515c007d6c1248937df534cc7b6",
+                "reference": "e3ee0737c66b7515c007d6c1248937df534cc7b6",
                 "shasum": ""
             },
             "require": {
@@ -77,7 +77,59 @@
                 "issues": "https://github.com/ocallit/Sqler/issues",
                 "source": "https://github.com/ocallit/Sqler/tree/main"
             },
-            "time": "2025-01-27T16:40:54+00:00"
+            "time": "2025-04-01T11:40:17+00:00"
+        },
+        {
+            "name": "slowprog/composer-copy-file",
+            "version": "0.3.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/slowprog/CopyFile.git",
+                "reference": "b02d55f7587577f29d355f0ce7b697f66dffc0af"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/slowprog/CopyFile/zipball/b02d55f7587577f29d355f0ce7b697f66dffc0af",
+                "reference": "b02d55f7587577f29d355f0ce7b697f66dffc0af",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "composer/composer": "1.0.*@dev",
+                "mikey179/vfsstream": "~1",
+                "php-mock/php-mock-phpunit": "~1",
+                "phpunit/phpunit": "5.7.27",
+                "symfony/filesystem": "~2.7",
+                "symfony/finder": "~2.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "SlowProg\\CopyFile\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andrey Tyshev",
+                    "email": "slowprog@gmail.com"
+                }
+            ],
+            "description": "Composer script copying your files after install",
+            "homepage": "https://github.com/SlowProg/composer-copy-file",
+            "keywords": [
+                "copy file"
+            ],
+            "support": {
+                "issues": "https://github.com/slowprog/CopyFile/issues",
+                "source": "https://github.com/slowprog/CopyFile/tree/0.3.3"
+            },
+            "time": "2020-07-02T14:44:41+00:00"
         }
     ],
     "packages-dev": [],
