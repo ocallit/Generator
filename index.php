@@ -22,21 +22,22 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         ];
         $sqlExecutor = new SqlExecutor($config);
 
-
-
         $query = $_POST['query'] ?? '';
-        $ver = $_POST['ver'] ?? '';
-        if($ver == 'Tablas') {
-            $r = $sqlExecutor->array("SHOW FULL TABLES");
-            $tables = [];
-            foreach($r as $table)
-                $tables[] = reset($table) . ($table['Table_type'] !== 'BASE TABLE' ? ' (VIEW)' : '');
-            $result = "<ol style='line-height:2em;column-count:4'><li>" . implode("</li><li>", $tables) . "</li></ol>";
-        } elseif(!empty($query)) {
-            DatabaseMetadata::initialize($sqlExecutor);
-            $builder = new ColModelBuilder($sqlExecutor);
-            $colModel = $builder->buildFromQuery($query);
-            $result = htmlspecialchars($builder->toJson($colModel));
+        switch( $_POST['action'] ?? '') {
+            case 'listTables':
+                $r = $sqlExecutor->array("SHOW FULL TABLES");
+                $tables = [];
+                foreach($r as $table)
+                    $tables[] = reset($table) . ($table['Table_type'] !== 'BASE TABLE' ? ' (VIEW)' : '');
+                $result = "<ol style='line-height:2em;column-count:4'><li>" . implode("</li><li>", $tables) . "</li></ol>";
+                break;
+            default:
+                if(!empty($query)) {
+                    DatabaseMetadata::initialize($sqlExecutor);
+                    $builder = new ColModelBuilder($sqlExecutor);
+                    $colModel = $builder->buildFromQuery($query);
+                    $result = htmlspecialchars($builder->toJson($colModel));
+                }
         }
 
     } catch(Exception $e) {
@@ -49,146 +50,134 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generator</title>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 20px;
-            background-color: white;
-        }
-
-        .container {
-            background-color: white;
-            margin:0;
-            padding: 0 0.5em 1em 0.5em;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-group {
-
-        }
-        .flexRow {display: flex; flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 10px;}
-        label {color: maroon;}
-        input[type="text"],
-        input[type="password"],
-        textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 14px;
-        }
-
-        textarea {
-            height: 150px;
-            font-family: "Roboto Mono", "Courier New", monospace;
-            resize: vertical;
-            background-color: white;
-        }
-
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        .result {
-            margin-top: 20px;
-            position: relative;
-        }
-
-        .result pre {
-            background-color: white;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .copy-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: #007bff;
-            font-size: 12px;
-            padding: 5px 10px;
-        }
-
-        .copy-btn:hover {
-            background-color: #0056b3;
-        }
-
-        .error {
-            color: #721c24;
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 4px;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/generator.css">
+    <link rel="stylesheet" href="assets/ocToolbar/css/ocToolbar.css">
 </head>
-<body>
-<div class="container">
-    <h1 style="color:maroon;margin:0;padding:0">Generator</h1>
-    <form method="post" id="colmoForm">
+<body style="padding:0;margin:0">
+<form method="post" id="colmoForm" style="width:100%;padding:0;margin:0">
+<header class="ocToolbar generatorToolbar" style="padding:0;margin: 0;width:100%" role="toolbar" aria-label="Main toolbar">
+    <div class="ocToolbarMessage"><h1 class="ocToolbarTitle">Generator</h1></div>
 
-        <div class="flexRow" style="margin-bottom:0;padding-bottom:0">
-            <div class="form-group">
-                <label for="databaseName">Database Name:</label><br>
-                <input type="text" id="databaseName" name="databaseName" required>
-            </div>
-            <div class="form-group">
-                <label for="userName">User Name:</label><br>
-                <input type="text" id="userName" name="userName" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-
-            <div><label style="cursor: pointer;"><input value="Tablas" name="ver" type="checkbox" onchange="this.form.submit()"> List Tables</label></div>
-            <div><button type="submit">Generate ColModel</button></div>
-
+    <fieldset class="ocToolbarGroup"><legend>Db Info</legend>
+        <div class="ocToolbarItem ocToggle">
+            <input role="switch" aria-checked="false" type="checkbox" id="listTables" onchange="this.form.submit()" value="listTables" name="action">
+            <label for="listTables" class="ocToolbarItem">
+                <i aria-hidden="true" class="fa-solid fa-database" style="color:var(--toolbar-icon-primary)"></i>
+                <p>Tables</p>
+            </label>
         </div>
-        <div class="form-group" style="margin-top:0;padding-top:0">
-            <label for="query">SQL Query:</label><br>
+
+        <div class="ocToolbarItem" style="justify-content: space-between"><label class="ocToolbarSelectItem">
+                <select class="statusSelect" name="defineTable" oninput="this.form.submit()">
+                    <option value=""></option>
+                    <option>Table 1</option>
+                    <option>Table 2</option>
+                </select>
+            </label>
+            <p>Table Definition</p>
+        </div>
+    </fieldset>
+
+    <fieldset class="ocToolbarGroup"><legend>Tabulator</legend>
+        <div class="ocToolbarItem ocToggle">
+            <input role="switch" aria-checked="false" type="checkbox" id="tabulatorColModel" onchange="this.form.submit()" value="tabulatorColModel" name="action">
+            <label for="tabulatorColModel" class="ocToolbarItem">
+                <i aria-hidden="true" class="fa-solid fa-list" style="color:var(--toolbar-icon-primary)"></i>
+                <p>ColDef</p>
+            </label>
+        </div>
+        <div class="ocToolbarItem ocToggle">
+            <input role="switch" aria-checked="false" type="checkbox" id="tabulatorDef" onchange="this.form.submit()" value="tabulatorDef" name="action">
+            <label for="tabulatorDef" class="ocToolbarItem">
+                <i aria-hidden="true" class="fa-solid fa-table" style="color:var(--toolbar-icon-primary)"></i>
+                <p>Init</p>
+            </label>
+        </div>
+        <div class="ocToolbarItem ocToggle">
+            <input role="switch" aria-checked="false" type="checkbox" id="tabulatorTemplate" onchange="this.form.submit()" value="tabulatorTemplate" name="action">
+            <label for="tabulatorTemplate" class="ocToolbarItem">
+                <i aria-hidden="true" class="fa-solid fa-file" style="color:var(--toolbar-icon-primary)"></i>
+                <p>Page</p>
+            </label>
+        </div>
+    </fieldset>
+
+    <fieldset class="ocToolbarGroup"><legend>JqGrid</legend>
+        <div class="ocToolbarItem ocToggle">
+            <input role="switch" aria-checked="false" type="checkbox" id="jqGridColModel" onchange="this.form.submit()" value="jqGridColModel" name="action">
+            <label for="jqGridColModel" class="ocToolbarItem">
+                <i aria-hidden="true" class="fa-solid fa-list" style="color:var(--toolbar-icon-primary)"></i>
+                <p>ColModel</p>
+            </label>
+        </div>
+        <div class="ocToolbarItem ocToggle">
+            <input role="switch" aria-checked="false" type="checkbox" id="jqGridDef" onchange="this.form.submit()" value="jqGridDef" name="action">
+            <label for="jqGridDef" class="ocToolbarItem">
+                <i aria-hidden="true" class="fa-solid fa-table" style="color:var(--toolbar-icon-primary)"></i>
+                <p>Init</p>
+            </label>
+        </div>
+        <div class="ocToolbarItem ocToggle">
+            <input role="switch" aria-checked="false" type="checkbox" id="jqGridTemplate" onchange="this.form.submit()" value="jqGridTemplate" name="action">
+            <label for="jqGridTemplate" class="ocToolbarItem">
+                <i aria-hidden="true" class="fa-solid fa-file" style="color:var(--toolbar-icon-primary)"></i>
+                <p>Page</p>
+            </label>
+        </div>
+    </fieldset>
+
+    <fieldset class="ocToolbarGroup"><legend>Db Connection</legend>
+        <div class="ocToolbarItem">
+            <label for="databaseName">Database Name:</label><br>
+            <input type="text" id="databaseName" name="databaseName" required>
+        </div>
+        <div class="ocToolbarItem">
+            <label for="userName">User Name:</label><br>
+            <input type="text" id="userName" name="userName" required>
+        </div>
+        <div class="ocToolbarItem">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+    </fieldset>
+</header>
+<div class="container">
+
+
+
+
+        <fieldset style="padding:1em 0 0 0"><legend><label for="query">Sql Query</label>
+                <span><i title="copy" class="fa-solid fa-copy fa-xl ocCopyEdit"></i> <i title="Paste" class="fa-solid fa-paste fa-xl ocCopyEdit"></i> <i title="Download" class="fa-solid fa-file-arrow-down fa-xl ocCopyEdit"></i></span>
+            </legend>
             <textarea id="query" name="query" required
                       placeholder="Enter your SELECT query here..."><?= htmlspecialchars($_POST['query'] ?? '') ?></textarea>
-        </div>
-    </form>
+        </fieldset>
 
-    <?php if($error): ?>
-        <div class="error"><?= htmlspecialchars($error) ?></div>
-    <?php endif; ?>
+        <?php if($error) echo "<div class='error'>" . htmlspecialchars($error)  . "</div>"; ?>
 
-    <div class="result">
-        <button class="copy-btn" onclick="copyResult()">Copy</button>
+    <fieldset style="padding:1em 0 0 0"><legend>
+            <span><i title="copy" class="fa-solid fa-copy fa-xl ocCopyEdit" onclick="copyResult()"></i> <i title="Download" class="fa-solid fa-file-arrow-down fa-xl ocCopyEdit"></i></span>
+        </legend>
         <pre id="result"><?= $result ?></pre>
-    </div>
+    </fieldset>
+</div>
+</form>
+
+<hr>
+<hr>
+<div class="flexRow" style="margin-bottom:0;padding-bottom:0">
+    <div><label style="cursor: pointer;"><input value="Tablas" name="ver" type="checkbox" onchange="this.form.submit()"> List Tables</label></div>
+    <div><button type="submit">Generate ColModel</button></div>
+</div>
+<hr>
+<div style="margin:1em;padding:1em;border:1px solid #ddd">
+    <ul>
+        <li><a href="https://php-operators.com/">PHP Operators</a>
+    </ul>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const fields = ['databaseName', 'userName', 'password'];
